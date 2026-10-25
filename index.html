@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mohtarf | Lesson 2-1 Cryptography & Authentication</title>
+<style>
+:root{--bg1:#0b1d4d;--bg2:#0a6bc4;--card:#ffffff;--tx:#14213d;--ok:#16a34a;--no:#dc2626;--ac:#f5b700;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--card:#16233f;--tx:#eef3ff}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;font-size:20px;line-height:1.7;color:var(--tx);background:linear-gradient(135deg,var(--bg1),var(--bg2),#6d28d9);background-size:300% 300%;animation:bg 16s ease infinite;min-height:100vh}
+@keyframes bg{50%{background-position:100% 100%}}
+.fl{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.fl i{position:absolute;font-style:normal;font-size:30px;opacity:.18;animation:up 14s linear infinite}
+@keyframes up{from{transform:translateY(110vh) rotate(0)}to{transform:translateY(-20vh) rotate(360deg)}}
+.w{position:relative;z-index:1;max-width:900px;margin:auto;padding:12px}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;padding:10px}
+.lg{background:#fff;color:#0a6bc4;font-weight:900;border-radius:14px;padding:6px 14px;font-size:26px;box-shadow:0 4px 14px #0005}
+.lg b{color:#f5b700}
+h1{color:#fff;text-align:center;font-size:26px;margin:4px 0 12px;text-shadow:0 2px 6px #0007}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+.tabs button,.btn{font:inherit;font-weight:800;border:0;border-radius:14px;padding:10px 16px;background:#fff;color:#0a6bc4;cursor:pointer;box-shadow:0 3px 0 #0003;transition:.15s}
+.tabs button.on,.btn{background:var(--ac);color:#14213d}
+.tabs button:active,.btn:active{transform:translateY(3px)}
+.card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px #0004}
+.en{display:block;direction:ltr;text-align:left}
+.ar{display:block;direction:rtl;text-align:right;color:#0a6bc4;font-weight:600}
+@media (prefers-color-scheme:dark){.ar{color:#8cc4ff}}
+.bl{margin:10px 0;padding:8px 12px;border-inline-start:6px solid var(--ac);background:#f5b70015;border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:17px;margin:8px 0}td,th{border:2px solid #0a6bc455;padding:6px;vertical-align:top}th{background:#0a6bc422}
+.q{font-weight:800;margin-bottom:8px}
+.o{display:block;width:100%;margin:8px 0;padding:10px;border:3px solid #0a6bc455;border-radius:14px;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.o:hover{border-color:var(--ac)}.o.ok{background:#16a34a33;border-color:var(--ok);animation:pop .4s}.o.no{background:#dc262633;border-color:var(--no);animation:shk .4s}
+@keyframes pop{50%{transform:scale(1.04)}}@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pb{height:12px;background:#0a6bc433;border-radius:9px;overflow:hidden;margin-bottom:10px}.pb div{height:100%;background:linear-gradient(90deg,#f5b700,#16a34a);width:0;transition:.4s}
+input,textarea{font:inherit;width:100%;padding:10px;border-radius:12px;border:3px solid #0a6bc455;background:transparent;color:inherit;margin:6px 0}
+.big{font-size:54px;text-align:center}.fx{position:fixed;font-size:40px;z-index:9;pointer-events:none;animation:fx 1.4s ease-out forwards}
+@keyframes fx{to{transform:translateY(-160px) scale(1.6);opacity:0}}
+.hide{display:none}
+</style></head><body>
+<div class="fl" id="fl"></div>
+<div class="w">
+<div class="logo"><div class="lg">محترف <b>Mohtarf</b></div><span style="font-size:15px">by a2zlearn</span></div>
+<h1>🔐 Lesson 2-1 · Cryptographic Technologies & Authentication<br><span style="font-size:20px">الدرس 2-1 · تقنيات التشفير والمصادقة</span></h1>
+<div class="tabs" id="tabs"></div>
+<div id="main"></div>
+</div>
+<script>
+const T=s=>{const[e,a]=s.split("|");return `<span class="en">${e}</span><span class="ar" dir="rtl">${a}</span>`};
+const TF=["True|صح","False|خطأ"];
+// ---------- LESSON PARTS ----------
+const parts=[
+{n:"1️⃣ HTTPS",h:"1. How HTTPS Communication Works|١. كيف يعمل اتصال HTTPS",
+txt:[
+"Imagine sending a secret letter 📮. HTTPS is like a magic locked mailbox: nobody on the road can read, change, or fake your letter!|تخيّل أنك ترسل خطاباً سرياً 📮. HTTPS مثل صندوق بريد سحري مقفول: لا أحد في الطريق يستطيع قراءة خطابك أو تغييره أو تزويره!",
+"HTTPS = HTTP + TLS. It gives you 3 powers: encryption (hide), tamper detection (no changes), and verifying who you talk to. It protects from eavesdropping, tampering, and impersonation.|HTTPS = HTTP + TLS. ويعطيك 3 قوى: التشفير (الإخفاء)، واكتشاف التلاعب (عدم التغيير)، والتحقق من الطرف الذي تتحدث معه. ويحميك من التنصت والتلاعب وانتحال الشخصية.",
+"The steps to build a secure connection are called the TLS handshake 🤝.|خطوات بناء الاتصال الآمن تسمى مصافحة TLS 🤝."],
+tbl:[["Stage|المرحلة","What happens|ماذا يحدث","Method|الطريقة"],
+["① Connection|الاتصال","Server sends a digital certificate + public key; browser checks it with a CA.|يرسل الخادم شهادة رقمية + مفتاحاً عاماً، والمتصفح يتحقق منها عبر جهة إصدار الشهادات (CA).","Public-key|المفتاح العام"],
+["② Key exchange|تبادل المفتاح","Browser makes a common key, encrypts it with the server's public key; server decrypts it with its private key.|ينشئ المتصفح مفتاحاً مشتركاً ويشفّره بالمفتاح العام للخادم، والخادم يفك تشفيره بمفتاحه الخاص.","Public-key|المفتاح العام"],
+["③ Data|نقل البيانات","Data is encrypted with the shared common key.|تُشفَّر البيانات بالمفتاح المشترك.","Common-key|المفتاح المشترك"]],
+txt2:["Public-key = share the key safely 🔑. Common-key = send big data fast ⚡. Together = security + speed!|المفتاح العام = مشاركة المفتاح بأمان 🔑. المفتاح المشترك = إرسال البيانات الكبيرة بسرعة ⚡. معاً = أمان + سرعة!",
+"Note: this is one way to share a common key; current TLS versions use Diffie-Hellman key agreement instead.|ملحوظة: هذه إحدى طرق مشاركة المفتاح؛ وإصدارات TLS الحالية تستخدم اتفاق المفاتيح Diffie-Hellman بدلاً منها."],
+q:[
+["HTTPS adds TLS encryption to HTTP.|يضيف HTTPS تشفير TLS إلى HTTP.",1],
+["All HTTPS data is exchanged using public-key cryptography.|تُنقل كل بيانات HTTPS باستخدام تشفير المفتاح العام.",0],
+["Who helps the browser verify the server is genuine?|من يساعد المتصفح على التحقق من أصالة الخادم؟",["The browser's color|لون المتصفح","A certificate authority (CA)|جهة إصدار الشهادات (CA)","The Wi-Fi router|جهاز الراوتر"],1],
+["The common key is encrypted with:|يُشفَّر المفتاح المشترك باستخدام:",["The user's password|كلمة مرور المستخدم","The server's private key|المفتاح الخاص للخادم","The server's public key|المفتاح العام للخادم"],2],
+["The server gets the common key by decrypting with:|يحصل الخادم على المفتاح المشترك بفك التشفير باستخدام:",["Its private key|مفتاحه الخاص","Its public key|مفتاحه العام","The CA's password|كلمة مرور الـ CA"],0],
+["After the key is shared, data is protected with:|بعد مشاركة المفتاح تُحمى البيانات باستخدام:",["Public-key cryptography|تشفير المفتاح العام","Common-key cryptography|تشفير المفتاح المشترك","A digital signature|التوقيع الرقمي"],1],
+["The procedure for establishing a secure connection is the TLS handshake.|إجراء إنشاء الاتصال الآمن يسمى مصافحة TLS.",1],
+["Why is common-key used for data?|لماذا يُستخدم المفتاح المشترك للبيانات؟",["It is more colorful|لأنه أكثر ألواناً","It is faster for large data|لأنه أسرع مع البيانات الكبيرة","It needs no key|لأنه لا يحتاج مفتاحاً"],1],
+["HTTPS cannot detect tampering.|لا يستطيع HTTPS اكتشاف التلاعب.",0],
+["Current TLS versions use Diffie-Hellman key agreement.|تستخدم إصدارات TLS الحالية اتفاق المفاتيح Diffie-Hellman.",1]]},
+{n:"2️⃣ MFA",h:"2. Use of Authentication in Real Services|٢. استخدام المصادقة في الخدمات الحقيقية",
+txt:[
+"Three factors prove it's really you: Knowledge 🧠 (password), Possession 📱 (phone / card), Biometric 👆 (fingerprint / face).|ثلاثة عوامل تثبت أنك أنت: المعرفة 🧠 (كلمة المرور)، والحيازة 📱 (الهاتف/البطاقة)، والقياسات الحيوية 👆 (البصمة/الوجه).",
+"Multi-factor authentication (MFA) = two or more DIFFERENT factors. If a thief steals your password, he still can't log in without your phone!|المصادقة متعددة العوامل = عاملان مختلفان أو أكثر. لو سرق لص كلمة مرورك فلن يستطيع الدخول بدون هاتفك!",
+"Two passwords are NOT MFA: both are knowledge.|كلمتا مرور ليستا مصادقة متعددة العوامل: فكلتاهما معرفة."],
+tbl:[["Service|الخدمة","Authentication used|المصادقة المستخدمة"],
+["Online banking|البنوك الإلكترونية","Password (knowledge) + one-time password (possession)|كلمة مرور (معرفة) + كلمة مرور لمرة واحدة (حيازة)"],
+["SNS login|تسجيل دخول الشبكات الاجتماعية","Password (knowledge) + SMS (possession)|كلمة مرور (معرفة) + رسالة SMS (حيازة)"],
+["Company laptop|حاسوب الشركة","Smart card (possession) + fingerprint (biometric)|بطاقة ذكية (حيازة) + بصمة (قياس حيوي)"],
+["Online shopping|التسوق الإلكتروني","Password (knowledge) + 3-D Secure one-time code (possession)|كلمة مرور (معرفة) + كود 3-D Secure لمرة واحدة (حيازة)"]],
+txt2:[],
+q:[
+["MFA combines:|تجمع المصادقة متعددة العوامل بين:",["Two or more of the three factors|عاملين أو أكثر من العوامل الثلاثة","Two passwords|كلمتي مرور","One long password|كلمة مرور طويلة"],0],
+["A fingerprint is which factor?|البصمة هي أي عامل؟",["Knowledge|المعرفة","Possession|الحيازة","Biometric|القياس الحيوي"],2],
+["A smart card is which factor?|البطاقة الذكية هي أي عامل؟",["Knowledge|المعرفة","Possession|الحيازة","Biometric|القياس الحيوي"],1],
+["Setting two passwords is MFA.|وضع كلمتي مرور يُعد مصادقة متعددة العوامل.",0],
+["Password + SMS is multi-factor authentication.|كلمة المرور + SMS مصادقة متعددة العوامل.",1],
+["A one-time password sent to your phone is:|كلمة المرور لمرة واحدة المرسلة لهاتفك هي:",["A possession factor|عامل حيازة","A knowledge factor|عامل معرفة","A biometric factor|عامل قياس حيوي"],0],
+["With MFA, a leaked password alone is not enough to log in.|مع MFA لا تكفي كلمة المرور المسروقة وحدها للدخول.",1],
+["Online banking uses:|تستخدم البنوك الإلكترونية:",["Fingerprint + face|بصمة + وجه","Password + one-time password|كلمة مرور + كلمة مرور لمرة واحدة","Two passwords|كلمتي مرور"],1],
+["A company laptop may use:|قد يستخدم حاسوب الشركة:",["Password + PIN|كلمة مرور + PIN","Password + secret question|كلمة مرور + سؤال سري","Smart card + fingerprint|بطاقة ذكية + بصمة"],2],
+["The 3-D Secure one-time code is a possession factor.|كود 3-D Secure لمرة واحدة عامل حيازة.",1]]},
+{n:"3️⃣ Combos",h:"3. Combinations of Security Technologies|٣. دمج تقنيات الأمن",
+txt:[
+"Safety is a TEAM game 🏆: no single technology does everything. We layer them!|الأمان لعبة فريق 🏆: لا توجد تقنية واحدة تفعل كل شيء. نحن نجمعها طبقات!"],
+tbl:[["Technology|التقنية","Effect|التأثير"],
+["Encryption|التشفير","Prevents content from being read by third parties|يمنع قراءة المحتوى من أطراف ثالثة"],
+["Digital signature|التوقيع الرقمي","Detects tampering/impersonation of sender + non-repudiation (sender can't deny sending)|يكشف التلاعب وانتحال المرسل + عدم الإنكار (لا يستطيع المرسل إنكار الإرسال)"],
+["Digital certificate|الشهادة الرقمية","Verifies the partner is authentic|تتحقق من أصالة الطرف الآخر"],
+["Multi-factor authentication|المصادقة متعددة العوامل","Prevents unauthorized logins|تمنع تسجيل الدخول غير المصرح به"]],
+txt2:[
+"Shopping online: ① HTTPS encryption hides content, ② browser checks the digital certificate, ③ MFA (password + SMS) for login, ④ a digital signature on the order can reveal tampering.|التسوق عبر الإنترنت: ① تشفير HTTPS يخفي المحتوى، ② المتصفح يفحص الشهادة الرقمية، ③ المصادقة متعددة العوامل (كلمة مرور + SMS) للدخول، ④ التوقيع الرقمي على الطلب يكشف التلاعب.",
+"Tip: a public key locks; a different private key unlocks. For a signature it reverses: private key signs, public key verifies.|معلومة: المفتاح العام يقفل والمفتاح الخاص المختلف يفتح. وفي التوقيع الرقمي ينعكس الاتجاه: المفتاح الخاص يوقّع والعام يتحقق."],
+q:[
+["Encryption:|التشفير:",["Prevents content being read by third parties|يمنع قراءة المحتوى من أطراف ثالثة","Makes sites faster|يجعل المواقع أسرع","Checks passwords|يفحص كلمات المرور"],0],
+["A digital signature:|التوقيع الرقمي:",["Verifies the partner is authentic|يتحقق من أصالة الطرف الآخر","Detects tampering and gives non-repudiation|يكشف التلاعب ويوفر عدم الإنكار","Prevents unauthorized logins|يمنع الدخول غير المصرح به"],1],
+["A digital certificate:|الشهادة الرقمية:",["Detects tampering|تكشف التلاعب","Encrypts data|تشفّر البيانات","Verifies the partner is authentic|تتحقق من أصالة الطرف الآخر"],2],
+["MFA:|المصادقة متعددة العوامل:",["Prevents unauthorized logins|تمنع الدخول غير المصرح به","Hides content|تخفي المحتوى","Signs orders|توقّع الطلبات"],0],
+["Non-repudiation means the sender cannot deny sending.|عدم الإنكار يعني أن المرسل لا يستطيع إنكار الإرسال.",1],
+["Safe services rely on a single technology.|تعتمد الخدمات الآمنة على تقنية واحدة فقط.",0],
+["Threat: user led to a fake website. Best defense:|التهديد: توجيه المستخدم لموقع مزيف. أفضل دفاع:",["Encryption|التشفير","Digital certificate|الشهادة الرقمية","Digital signature|التوقيع الرقمي"],1],
+["Threat: password leaked. Best defense:|التهديد: تسريب كلمة المرور. أفضل دفاع:",["Digital signature|التوقيع الرقمي","Digital certificate|الشهادة الرقمية","Multi-factor authentication|المصادقة متعددة العوامل"],2],
+["Threat: content intercepted. Best defense:|التهديد: اعتراض المحتوى. أفضل دفاع:",["Encryption|التشفير","Digital signature|التوقيع الرقمي","Digital certificate|الشهادة الرقمية"],0],
+["In a digital signature, the private key signs and the public key verifies.|في التوقيع الرقمي يوقّع المفتاح الخاص ويتحقق المفتاح العام.",1]]}];
+// ---------- FINAL EXAM (from the file) ----------
+const C3=["Encryption|التشفير","Digital signature|التوقيع الرقمي","Digital certificate|الشهادة الرقمية"];
+const F3=["A Knowledge + possession|أ معرفة + حيازة","B Knowledge + biometric|ب معرفة + قياس حيوي","C Biometric + possession|ج قياس حيوي + حيازة"];
+const C4=[...C3,"Multi-factor authentication|المصادقة متعددة العوامل"];
+const exam=[
+["Worked Ex. A: HTTPS uses both public-key and common-key cryptography.|مثال محلول (A): يستخدم HTTPS كلاً من تشفير المفتاح العام والمفتاح المشترك.",1],
+["Worked Ex. B: HTTPS exchanges all data using public-key cryptography.|مثال محلول (B): يتبادل HTTPS كل البيانات باستخدام تشفير المفتاح العام.",0],
+["Worked Ex. C: MFA combines two or more of the three factors of authentication.|مثال محلول (C): المصادقة متعددة العوامل تجمع بين عاملين أو أكثر من العوامل الثلاثة.",1],
+["Worked Ex. D: An example of MFA is setting two passwords.|مثال محلول (D): من أمثلة MFA وضع كلمتي مرور.",0],
+["(a) I want to prevent communication content from being read by third parties.|(أ) أريد منع قراءة محتوى الاتصال من أطراف ثالثة.",C3,0],
+["(b) I want to verify that data has not been altered during communication.|(ب) أريد التحقق من أن البيانات لم تتغير أثناء الاتصال.",C3,1],
+["(c) I want to verify that the communication partner is authentic.|(ج) أريد التحقق من أصالة الطرف الآخر في الاتصال.",C3,2],
+["Try 1-1: Which method lets browser and server safely share a common key?|جرّب 1-1: أي طريقة تتيح للمتصفح والخادم مشاركة المفتاح المشترك بأمان؟",["Common-key cryptography|تشفير المفتاح المشترك","Public-key cryptography|تشفير المفتاح العام","Digital signature|التوقيع الرقمي"],1],
+["Try 1-2: Which method is used for data communication after the common key is shared?|جرّب 1-2: أي طريقة تُستخدم لنقل البيانات بعد مشاركة المفتاح المشترك؟",["Public-key cryptography|تشفير المفتاح العام","Common-key cryptography|تشفير المفتاح المشترك","Digital certificate|الشهادة الرقمية"],1],
+["Try 2-1 (a): Password + one-time password|جرّب 2-1 (أ): كلمة مرور + كلمة مرور لمرة واحدة",F3,0],
+["Try 2-1 (b): Password + fingerprint authentication|جرّب 2-1 (ب): كلمة مرور + بصمة",F3,1],
+["Try 2-1 (c): Password + SMS authentication|جرّب 2-1 (ج): كلمة مرور + رسالة SMS",F3,0],
+["Try 2-1 (d): Face recognition + smart card|جرّب 2-1 (د): التعرف على الوجه + بطاقة ذكية",F3,2],
+["Try 2-2: Which is NOT an appropriate description of combining security technologies?|جرّب 2-2: أي مما يلي ليس وصفاً مناسباً لدمج تقنيات الأمن؟",["A Encryption prevents content from being read by third parties|أ التشفير يمنع قراءة المحتوى من أطراف ثالثة","B Digital signatures improve communication speed|ب التوقيعات الرقمية تحسّن سرعة الاتصال","C Digital certificates verify the partner is authentic|ج الشهادات الرقمية تتحقق من أصالة الطرف الآخر","D Combining technologies addresses various threats|د دمج التقنيات يعالج تهديدات متنوعة"],1],
+["Exercise 2-1 (a): The web server sends a ( a ) and a public key.|تمرين 2-1 (a): يرسل الخادم ( a ) ومفتاحاً عاماً.",["Common key|مفتاح مشترك","Digital certificate|شهادة رقمية","Digital signature|توقيع رقمي"],1],
+["Exercise 2-1 (b): The browser verifies the server through ( b ).|تمرين 2-1 (b): يتحقق المتصفح من الخادم عبر ( b ).",["Digital signature|توقيع رقمي","Encryption|التشفير","Certificate authority (CA)|جهة إصدار الشهادات (CA)"],2],
+["Exercise 2-1 (c): The browser creates a ( c ) and encrypts it with the server's public key.|تمرين 2-1 (c): ينشئ المتصفح ( c ) ويشفّره بالمفتاح العام للخادم.",["Common key|مفتاح مشترك","Private key|مفتاح خاص","Password|كلمة مرور"],0],
+["Exercise 3-1 (a): A password is leaked and unauthorized login occurs.|تمرين 3-1 (أ): تسريب كلمة المرور وحدوث دخول غير مصرح به.",C4,3],
+["Exercise 3-1 (b): Data is altered during communication.|تمرين 3-1 (ب): تغيير البيانات أثناء الاتصال.",C4,1],
+["Exercise 3-1 (c): A user is led to a fake website.|تمرين 3-1 (ج): توجيه المستخدم إلى موقع مزيف.",C4,2],
+["Exercise 3-1 (d): Communication content is intercepted by a third party.|تمرين 3-1 (د): اعتراض محتوى الاتصال من طرف ثالث.",C4,0],
+["Exercise 3-2: Which is NOT an appropriate example of MFA?|تمرين 3-2: أي مما يلي ليس مثالاً مناسباً لـ MFA؟",["A Password + smartphone notification|أ كلمة مرور + إشعار الهاتف","B Password + secret question|ب كلمة مرور + سؤال سري","C Fingerprint + smart card|ج بصمة + بطاقة ذكية","D Password + SMS|د كلمة مرور + SMS"],1]];
+const essays=[
+["Exam-style [6 marks] / Try 1-3 / Exercise 2-2: Explain why HTTPS uses public-key cryptography to share the key but common-key cryptography to exchange the data. (security and speed)|سؤال بنمط الامتحان [6 درجات] / جرّب 1-3 / تمرين 2-2: اشرح لماذا يستخدم HTTPS تشفير المفتاح العام لمشاركة المفتاح، لكن تشفير المفتاح المشترك لتبادل البيانات. (الأمان والسرعة)",
+"Public-key cryptography lets the browser and server share a common key safely, because the public key can be sent openly and only the private key can unlock it (security). But it is slow for large amounts of data. Common-key cryptography is much faster, so it is used to exchange the data once the key is shared (speed). Combining both gives security and speed.|يتيح تشفير المفتاح العام للمتصفح والخادم مشاركة المفتاح المشترك بأمان، لأن المفتاح العام يمكن إرساله علناً ولا يفكه إلا المفتاح الخاص (الأمان). لكنه بطيء مع البيانات الكبيرة. أما تشفير المفتاح المشترك فأسرع بكثير، لذلك يُستخدم لتبادل البيانات بعد مشاركة المفتاح (السرعة). والجمع بينهما يحقق الأمان والسرعة."],
+["Pause & Think: If a password is leaked, why can a second factor sent to a phone still keep the account safe?|توقّف وفكّر: إذا تسرّبت كلمة المرور، فلماذا يظل العامل الثاني المرسل إلى الهاتف قادراً على حماية الحساب؟",
+"Because the attacker has the password (knowledge) but not the phone (possession). MFA needs two different factors, so one broken factor is not enough to log in.|لأن المهاجم يملك كلمة المرور (معرفة) لكنه لا يملك الهاتف (حيازة). فالمصادقة متعددة العوامل تحتاج عاملين مختلفين، ولا يكفي كسر عامل واحد للدخول."],
+["In a New Context: A small online shop wants to secure customer login and payment. Name two security technologies, say where each helps, and identify one threat that could still remain.|في سياق جديد: متجر إلكتروني صغير يريد تأمين دخول العملاء والدفع. اذكر تقنيتين أمنيتين وأين تفيد كل منهما، ثم حدّد تهديداً واحداً قد يبقى.",
+"1) HTTPS encryption protects payment details from being read while travelling. 2) Multi-factor authentication (password + SMS) protects customer login from unauthorized access. A remaining threat: a customer being tricked into giving away their code or password (phishing), or a stolen phone.|١) تشفير HTTPS يحمي بيانات الدفع من القراءة أثناء انتقالها. ٢) المصادقة متعددة العوامل (كلمة مرور + SMS) تحمي دخول العميل من الوصول غير المصرح به. تهديد قد يبقى: خداع العميل ليعطي الكود أو كلمة المرور (التصيّد)، أو سرقة الهاتف."],
+["Reflect & Challenge: Suggest one extra security measure an online shop could add, and one threat it would still not remove.|تأمّل وتحدَّ: اقترح إجراءً أمنياً إضافياً يمكن للمتجر إضافته، وتهديداً واحداً لن يزيله.",
+"Extra measure: add a digital signature on orders (or biometric login) to detect tampering. Remaining threat: malware on the customer's own device, or a careless user sharing the code, is still possible.|إجراء إضافي: إضافة توقيع رقمي على الطلبات (أو دخول بالبصمة) لاكتشاف التلاعب. التهديد المتبقي: برمجية خبيثة على جهاز العميل نفسه، أو مستخدم مهمل يشارك الكود، ما زال ممكناً."],
+["Think as an Engineer: A school portal (grades + fees). Password only, or password + one-time password to the phone? Give evidence.|فكّر كمهندس: بوابة مدرسية (الدرجات والرسوم). كلمة مرور فقط أم كلمة مرور + كلمة مرور لمرة واحدة على الهاتف؟ قدّم دليلاً.",
+"Password + one-time password. A password alone fails once it leaks; a possession factor still blocks the login. Benefit for the school: fewer hacked accounts; drawback for a student with no smartphone: cannot receive the code, so the school should offer a backup option (e.g. a smart card or printed codes).|كلمة مرور + كلمة مرور لمرة واحدة. فكلمة المرور وحدها تفشل عند تسريبها، بينما عامل الحيازة يمنع الدخول. الفائدة للمدرسة: حسابات مخترَقة أقل؛ والعيب للطالب بلا هاتف ذكي: لا يستطيع استلام الكود، لذا يجب أن توفر المدرسة بديلاً (كبطاقة ذكية أو أكواد مطبوعة)."]];
+// ---------- ENGINE ----------
+let ac;function snd(f,d=.15,t="sine"){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=.15;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+const good=()=>{[523,659,784].forEach((f,i)=>setTimeout(()=>snd(f),i*110))},bad=()=>{snd(200,.4,"sawtooth")};
+function fx(e,x,y){const s=document.createElement("div");s.className="fx";s.textContent=e;s.style.left=x+"px";s.style.top=y+"px";document.body.appendChild(s);setTimeout(()=>s.remove(),1400)}
+const $=id=>document.getElementById(id),main=$("main");
+for(let i=0;i<14;i++){const e=document.createElement("i");e.textContent=["🔐","🔑","🛡️","💻","📱","🌐"][i%6];e.style.left=(i*7.3)%100+"%";e.style.animationDelay=(-i*1.9)+"s";$("fl").appendChild(e)}
+function norm(q){return q.length==2?{t:q[0],o:TF,c:q[1]?0:1}:{t:q[0],o:q[1],c:q[2]}}
+function quiz(box,list,done){let i=0,sc=0;list=list.map(norm);
+ const show=()=>{if(i>=list.length)return done(sc,list.length);const q=list[i];
+  box.innerHTML=`<div class="pb"><div style="width:${i/list.length*100}%"></div></div><div class="q">${i+1}/${list.length} — ${T(q.t)}</div>`+q.o.map((o,k)=>`<button class="o" data-k="${k}">${T(o)}</button>`).join("");
+  box.querySelectorAll(".o").forEach(b=>b.onclick=ev=>{const k=+b.dataset.k;box.querySelectorAll(".o").forEach(x=>x.disabled=true);
+   box.querySelectorAll(".o")[q.c].classList.add("ok");
+   if(k==q.c){sc++;good();fx("😄🎉",ev.clientX,ev.clientY)}else{b.classList.add("no");bad();fx("😢❌",ev.clientX,ev.clientY)}
+   const n=document.createElement("button");n.className="btn";n.style.marginTop="8px";n.innerHTML="Next ➜ التالي";n.onclick=()=>{i++;show()};box.appendChild(n)});};
+ show()}
+function tabs(){const L=[...parts.map((p,i)=>[p.n,i]),["🏆 Final Exam | الاختبار",3]];
+ $("tabs").innerHTML=L.map(([n,i],k)=>`<button data-i="${i}" data-k="${k}">${n}</button>`).join("");
+ $("tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("tabs").querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");+b.dataset.k<3?part(+b.dataset.i):final()})}
+function part(i){const p=parts[i];
+ main.innerHTML=`<div class="card"><h2>${T(p.h)}</h2>${p.txt.map(t=>`<div class="bl">${T(t)}</div>`).join("")}
+ <table>${p.tbl.map((r,k)=>`<tr>${r.map(c=>k?`<td>${T(c)}</td>`:`<th>${T(c)}</th>`).join("")}</tr>`).join("")}</table>
+ ${p.txt2.map(t=>`<div class="bl">${T(t)}</div>`).join("")}</div>
+ <div class="card"><h2>📝 10 Questions | ١٠ أسئلة</h2><div id="qz"></div></div>`;
+ quiz($("qz"),p.q,(s,n)=>{$("qz").innerHTML=`<div class="big">${s>=8?"🏆🎉":s>=5?"👍":"💪"}</div><h2 style="text-align:center">${s} / ${n}</h2>`;if(s>=5){good();fx("🎊",innerWidth/2,innerHeight/2)}});}
+function final(){main.innerHTML=`<div class="card"><h2>🏆 Final Exam | الاختبار النهائي</h2><p>${T("Enter your name to start (22 questions from the lesson file + essay questions).|اكتب اسمك لتبدأ (٢٢ سؤالاً من ملف الدرس + أسئلة مقالية).")}</p><input id="nm" placeholder="Name | الاسم"><button class="btn" id="go">Start ▶ ابدأ</button></div><div class="card hide" id="ex"></div>`;
+ $("go").onclick=()=>{const n=$("nm").value.trim();if(!n){$("nm").focus();return}$("ex").classList.remove("hide");$("go").disabled=true;
+  quiz($("ex"),exam,(s,t)=>{const pct=Math.round(s/t*100);
+   $("ex").innerHTML=`<div class="big">${pct>=85?"🏆":pct>=50?"👍":"💪"}</div><h2 style="text-align:center">${n}: ${s} / ${t} (${pct}%)</h2><button class="btn" id="wa">📲 Send result to WhatsApp | إرسال النتيجة</button>
+   <h2>✍️ Essay Questions | الأسئلة المقالية</h2>`+essays.map((e,k)=>`<div class="bl"><div class="q">${k+1}. ${T(e[0])}</div><textarea rows="3" placeholder="Your answer | إجابتك"></textarea><button class="btn" onclick="this.nextElementSibling.classList.toggle('hide')">Model answer | الإجابة النموذجية</button><div class="hide bl" style="border-color:#16a34a">${T(e[1])}</div></div>`).join("");
+   $("wa").onclick=()=>{const m=`Mohtarf - Lesson 2-1 Cryptography & Authentication\nالاسم / Name: ${n}\nالنتيجة / Score: ${s}/${t} (${pct}%)`;window.open("https://wa.me/201099920517?text="+encodeURIComponent(m),"_blank")};
+   if(pct>=50){good();fx("🎊",innerWidth/2,innerHeight/2)}})}}
+tabs();$("tabs").querySelector("button").click();
+</script></body></html>
